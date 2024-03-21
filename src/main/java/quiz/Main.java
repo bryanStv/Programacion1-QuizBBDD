@@ -94,9 +94,14 @@ public class Main {
         PreparedStatement st = con.prepareStatement(query);
         st.setInt(1,getIDuser(user));
         ResultSet rs = st.executeQuery();
+        System.out.println(ANSI_PURPLE);
+        System.out.println("                                                                     PUNTUACIÓN MÁXIMA                                                                 ");
+        System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
         while(rs.next()){
-            System.out.printf("Nick: %s %d.pts fecha: %s\n",rs.getString("nick"),rs.getInt("ScorePoints"),rs.getString("hora"));
+            System.out.printf("\t\t\t\t\t\t\t\t\t    Nick: %s %d.pts fecha: %s\n",rs.getString("nick"),rs.getInt("ScorePoints"),rs.getString("hora"));
         }
+        System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
+        System.out.println(ANSI_RESET);
     }
 
     private static void jugar(String user) throws SQLException{
@@ -106,6 +111,8 @@ public class Main {
         PreparedStatement st = con.prepareStatement(query);
         ResultSet rs = st.executeQuery();
         int fallos = 0;
+        System.out.print(ANSI_PURPLE);
+        System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
         while(rs.next()){
             System.out.printf("Pregunta %d --> %s\n\tOpciones:\n\t\t1: %s , 2: %s, 3: %s\n",rs.getInt(1),rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6));
             System.out.printf("\t\tDime tu respuesta(fallos: %s): ",fallos);
@@ -118,6 +125,8 @@ public class Main {
                 respuesta = 6;
             }else{
                 System.out.print("Error, elige otra opción válida(saliendo)");
+                System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
+                System.out.println(ANSI_RESET);
                 System.exit(0);
             }
             if(fallos == 3){
@@ -132,6 +141,9 @@ public class Main {
             }
         }
         addPoints(user);
+        System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
+        System.out.println(ANSI_RESET);
+        puntuacionMaximaUser(user);
     }
 
     private static void addPoints(String user) throws SQLException{
