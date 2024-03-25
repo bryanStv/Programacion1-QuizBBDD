@@ -56,7 +56,7 @@ public class Main {
     }
     private static void login(String user) throws SQLException{
         System.out.println(ANSI_CYAN+"███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
-        System.out.println("██                                                Jugar(1) | Ver puntuación tu  máxima(2) | Salir(3)                                                 ██");
+        System.out.println("██                                                Jugar(1) | Ver tu puntuación máxima(2) | Salir(3)                                                  ██");
         System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
         System.out.printf("-----------------------------> ██Bienvenido, %s██> %s",user,ANSI_RESET);
         Scanner tc = new Scanner(System.in);
