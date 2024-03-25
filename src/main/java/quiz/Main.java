@@ -2,6 +2,8 @@ package quiz;
 import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
     private static java.sql.Connection con;
@@ -37,6 +39,10 @@ public class Main {
                         System.out.println(ANSI_PURPLE+"ADIÓS"+ANSI_RESET);
                         System.exit(0);
                     } else if (ans.equals("S") || ans.equals("s")) {
+                        while(user.equals("") || user.equals(" ") || !espacios(user)){
+                            System.out.print("Introduce un nick correcto: ");
+                            user = tc.nextLine();
+                        }
                         registro(user);
                         login(user);
                         break;
@@ -76,7 +82,7 @@ public class Main {
         }
     }
     private static void rankings() throws SQLException{
-        String query = "select * from scores order by scorePoints DESC,hora DESC";
+        String query = "select * from scores order by scorePoints DESC,hora DESC limit 10";
         PreparedStatement st = con.prepareStatement(query);
         ResultSet rs = st.executeQuery();
         int contador = 1;
@@ -184,14 +190,17 @@ public class Main {
     }
 
     private static void registro(String user) throws SQLException{
-        Scanner tc = new Scanner(System.in);
         PreparedStatement st = null;
-        System.out.print("Nick: ");
-        String name = tc.nextLine();
         String query = "INSERT INTO player(nick) VALUES(?)";
         st = con.prepareStatement(query);
         st.setString(1,user);
         st.executeUpdate();
+    }
+
+    public static boolean espacios(String user){
+        Pattern pattern = Pattern.compile("^(?!\\s)\\S*(?<!\\s)$"); //Para que no deje espacios
+        Matcher matcher = pattern.matcher(user);
+        return matcher.matches();
     }
 
     private static boolean userExiste(String user) throws SQLException{
