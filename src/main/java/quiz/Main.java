@@ -1,5 +1,6 @@
 package quiz;
 import java.sql.*;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -47,7 +48,7 @@ public class Main {
                 break;
             case 2:
                 rankings();
-                break;
+                menu();
             default:
                 System.out.println(ANSI_PURPLE+"Elige una opción correcta (1|2)"+ANSI_RESET);
                 menu();
@@ -55,7 +56,7 @@ public class Main {
     }
     private static void login(String user) throws SQLException{
         System.out.println(ANSI_CYAN+"███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
-        System.out.println("██                                                  Jugar(1) | Ver puntuación máxima(2) | Salir(3)                                                   ██");
+        System.out.println("██                                                Jugar(1) | Ver puntuación tu  máxima(2) | Salir(3)                                                 ██");
         System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
         System.out.printf("-----------------------------> ██Bienvenido, %s██> %s",user,ANSI_RESET);
         Scanner tc = new Scanner(System.in);
@@ -105,45 +106,52 @@ public class Main {
     }
 
     private static void jugar(String user) throws SQLException{
+        int contador = 1;
         Scanner tc = new Scanner(System.in);
         int respuesta;
-        String query = "select * from questions";
+        String query = "select * from questions order by random()";
         PreparedStatement st = con.prepareStatement(query);
         ResultSet rs = st.executeQuery();
         int fallos = 0;
         System.out.print(ANSI_PURPLE);
         System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
         while(rs.next()){
-            System.out.printf("Pregunta %d --> %s\n\tOpciones:\n\t\t1: %s , 2: %s, 3: %s\n",rs.getInt(1),rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6));
+            System.out.printf("Pregunta %d --> %s\n\tOpciones:\n\t\t1: %s , 2: %s, 3: %s\n",contador++,rs.getString(2),rs.getString(4),rs.getString(5),rs.getString(6));
             System.out.printf("\t\tDime tu respuesta(fallos: %s): ",fallos);
-            respuesta = tc.nextInt();
-            if(respuesta == 1){
-                respuesta = 4;
-            }else if(respuesta == 2){
-                respuesta = 5;
-            }else if(respuesta == 3){
-                respuesta = 6;
-            }else{
-                System.out.print("Error, elige otra opción válida(saliendo)");
-                System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
-                System.out.println(ANSI_RESET);
-                System.exit(0);
-            }
-            if(fallos == 3){
-                break;
-            }
-            if(rs.getString(3).equals(rs.getString(respuesta))){
-                System.out.println("CORRECTO");
-                puntuacion+=10;
-            }else{
-                fallos++;
-                System.out.println("INCORRECTO");
+            try{
+                respuesta = tc.nextInt();
+                if(respuesta == 1){
+                    respuesta = 4;
+                }else if(respuesta == 2){
+                    respuesta = 5;
+                }else if(respuesta == 3){
+                    respuesta = 6;
+                }else{
+                    System.out.print("Error, elige otra opción válida(saliendo)");
+                    System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
+                    System.out.println(ANSI_RESET);
+                    System.exit(0);
+                }
+                if(fallos == 3){
+                    break;
+                }
+                if(rs.getString(3).equals(rs.getString(respuesta))){
+                    System.out.println("CORRECTO");
+                    puntuacion+=10;
+                }else{
+                    fallos++;
+                    System.out.println("INCORRECTO");
+                }
+            }catch (InputMismatchException e){
+                System.out.println("Por favor, introduce una respuesta correcta(1-3)");
+                jugar(user);
             }
         }
         addPoints(user);
         System.out.println("███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████");
         System.out.println(ANSI_RESET);
         puntuacionMaximaUser(user);
+        menu();
     }
 
     private static void addPoints(String user) throws SQLException{
